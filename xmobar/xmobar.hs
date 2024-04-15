@@ -1,10 +1,10 @@
 Config { overrideRedirect = False
-       , font     = "xft:Ubuntu Nerd Font"
-       , bgColor  = "#5f5f5f"
-       , fgColor  = "#f8f8f2"
-       , position = TopW L 100
-       , commands = [ Run Weather "EPKK"
-                        [ "--template", "<tempC>󰔄"
+       , font       = "xft:Ubuntu Nerd Font 14"
+       , bgColor    = "#91233d"
+       , fgColor    = "#f8f8f2"
+       , position   = Static { xpos = 256, ypos = 15, width = 2048, height = 20 }
+       , commands   = [ Run Weather "EPKK"
+                        [ "--template", " <tempC>󰔄"
                         , "-L", "0"
                         , "-H", "25"
                         , "--low"   , "lightblue"
@@ -18,11 +18,12 @@ Config { overrideRedirect = False
                         , "--high"  , "red"
                         , "--normal", "white"
                         ] 10
-                    , Run Memory ["--template", " <usedratio>%"] 10
-                    , Run Date " %a %Y-%m-%d <fc=#8be9fd>%H:%M</fc>" "date" 10
+                    , Run Memory ["--template", " <usedratio>%"] 10
+                    , Run Date " %a %Y-%m-%d |  <fc=#8be9fd>%H:%M</fc>" "date" 10
+                    , Run Com "/home/jw/.config/xmonad/scripts/gpu_temp.sh" [] "gputemp" 10
                     , Run XMonadLog
                     ]
        , sepChar  = "%"
        , alignSep = "}{"
-       , template = " %XMonadLog% }{ %cpu% | %memory% | %EPKK% | %date% "
+       , template = " %date% } %XMonadLog% { %cpu% | %memory% | %gputemp% | %EPKK% "
        }
