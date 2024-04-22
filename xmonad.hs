@@ -25,12 +25,13 @@ myTerminal      = "kitty"
 myLauncher      = "~/.config/rofi/launchers/type-2/launcher.sh" 
 myXMobar        = "xmobar -x 1 ~/.config/xmonad/xmobar/xmobar.hs"
 myScreenLock    = "xscreensaver-command -lock"
-myScreenshot    = "scrot -s"
+myScreenshot    = "scrot -s ~/Pictures/%Y-%m-%d_%T.png"
 -------------------------------------------------------------------------------
 -- Settings
 -------------------------------------------------------------------------------
-myModMask       = mod4Mask
-myBorderWidth   = 1
+myModMask               = mod4Mask
+myBorderWidth           = 1
+myFocusedBorderColor    = "#035096"
 -------------------------------------------------------------------------------
 -- Workspaces
 -------------------------------------------------------------------------------
@@ -59,7 +60,7 @@ myLayoutHook = layoutTall ||| layoutSpiral ||| layoutFull
 myStartupHook :: X ()
 myStartupHook = do
     spawnOnce "~/.fehbg"
-    spawnOnce "setxkbmap pl"
+    spawnOnce "~/.config/xmonad/scripts/keyboard_layout.sh"
     spawnOnce "picom"
     spawnOnce "xscreensaver --no-splash"
 
@@ -67,8 +68,10 @@ myStartupHook = do
 myManageHook :: ManageHook
 myManageHook = composeAll
     [
-        isFullscreen            --> doFullFloat,
-        isDialog                --> doCenterFloat
+          className =?  "steam"         --> doFloat
+        , className =?  "UnrealEditor"  --> doFloat  
+        , isFullscreen                  --> doFullFloat
+        , isDialog                      --> doCenterFloat
     ]
 
 -------------------------------------------------------------------------------
@@ -76,18 +79,19 @@ myManageHook = composeAll
 -------------------------------------------------------------------------------
 myXmobarPP :: PP
 myXmobarPP = def
-    { ppSep             = magenta " • "
-    , ppTitleSanitize   = xmobarStrip
-    , ppCurrent         = wrap " " "" . xmobarBorder "Bottom" "#8be9fd" 2
-    , ppHidden          = white . wrap " " ""
-    , ppHiddenNoWindows = lowWhite . wrap " " ""
-    , ppUrgent          = red . wrap (yellow "!") (yellow "!")
-    , ppOrder           = \[ws, _, _, _] -> [ws]
-    , ppExtras          = [logTitles formatFocused formatUnfocused]
+    { ppSep                 = magenta " • "
+    , ppTitleSanitize       = xmobarStrip
+    , ppCurrent             = wrap " " "" . xmobarBorder "Bottom" "#8be9fd" 2
+    , ppVisible             = wrap " " "" . xmobarBorder "Bottom" "#fadc0c" 2
+    , ppHidden              = white . wrap " " ""
+    , ppHiddenNoWindows     = lowWhite . wrap " " ""
+    , ppUrgent              = red . wrap (yellow "!") (yellow "!")
+    , ppOrder               = \[ws, _, _, _] -> [ws]
+    , ppExtras              = [logTitles formatFocused formatUnfocused]
     }
   where
-    formatFocused   = wrap (white    "[") (white    "]") . magenta . ppWindow
-    formatUnfocused = wrap (lowWhite "[") (lowWhite "]") . blue    . ppWindow
+    formatFocused   = wrap (white    "") (white    "") . magenta . ppWindow
+    formatUnfocused = wrap (lowWhite "") (lowWhite "") . blue    . ppWindow
 
     -- | Windows should have *some* title, which should not not exceed a
     -- sane length.
@@ -116,14 +120,15 @@ main = do
 -------------------------------------------------------------------------------
 myConfig = def
     {
-        terminal        = myTerminal,
-        modMask         = myModMask,
-        borderWidth     = myBorderWidth,
-        workspaces      = myWorkspaces,
+        terminal            = myTerminal,
+        modMask             = myModMask,
+        borderWidth         = myBorderWidth,
+        focusedBorderColor  = myFocusedBorderColor,
+        workspaces          = myWorkspaces,
         -- Hooks
-        layoutHook      = mySpacing $ smartBorders myLayoutHook,
-        manageHook      = myManageHook,
-        startupHook     = myStartupHook 
+        layoutHook          = avoidStruts . mySpacing $ smartBorders myLayoutHook,
+        manageHook          = myManageHook,
+        startupHook         = myStartupHook 
     }
     `additionalKeysP`
     [ 
