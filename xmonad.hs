@@ -35,8 +35,8 @@ myFocusedBorderColor    = "#035096"
 -------------------------------------------------------------------------------
 -- Workspaces
 -------------------------------------------------------------------------------
---myWorkspaces = ["", "", "", "", ""] ++ map show [6..9]
-myWorkspaces = ["\59285", "\62056", "\61729", "\984922", "\61878", "\61501"]
+--myWorkspaces = ["", " ", " ", " ", " ", " "] ++ map show [6..9]
+myWorkspaces = ["\59285", "\62056", "\61729", "\984922", "\61878", "\61951"]
 -------------------------------------------------------------------------------
 -- Gaps around and between windows
 -------------------------------------------------------------------------------
@@ -68,10 +68,11 @@ myStartupHook = do
 myManageHook :: ManageHook
 myManageHook = composeAll
     [
-          className =?  "steam"         --> doFloat
-        , className =?  "UnrealEditor"  --> doFloat  
-        , isFullscreen                  --> doFullFloat
-        , isDialog                      --> doCenterFloat
+          className =?  "steam"     --> doFloat >> doShift (myWorkspaces !! 4)
+        , className =?  "discord"   --> doShift (myWorkspaces !! 5)
+        , className =?  "chromium"  --> doShift (myWorkspaces !! 1)
+        , isFullscreen              --> doFullFloat
+        , isDialog                  --> doCenterFloat
     ]
 
 -------------------------------------------------------------------------------
@@ -126,9 +127,9 @@ myConfig = def
         focusedBorderColor  = myFocusedBorderColor,
         workspaces          = myWorkspaces,
         -- Hooks
-        layoutHook          = avoidStruts . mySpacing $ smartBorders myLayoutHook,
+        startupHook         = myStartupHook,
         manageHook          = myManageHook,
-        startupHook         = myStartupHook 
+        layoutHook          = avoidStruts . mySpacing $ smartBorders myLayoutHook
     }
     `additionalKeysP`
     [ 
